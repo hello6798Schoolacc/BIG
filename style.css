@@ -1,0 +1,43 @@
+body {
+    background-color: black;
+}
+.upgrade {
+    min-height: 60px;
+    min-width: 150px;
+    background-color: aquamarine;
+    border-radius: 15px;
+    box-shadow: 0 0 4px aquamarine;
+    transition: box-shadow 0.2s linear, transform 0.1s ease-in-out, opacity 2s linear !important;
+    font-size: 12px;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    line-height: 20px;
+    outline: 1px rgb(50,100,88) solid;
+}
+.upgrade:hover {
+    box-shadow: 0 0 10px aquamarine;
+    cursor: pointer;
+}
+.upgrade:active {
+    transform: translateY(2px);
+}
+p {
+    white-space: nowrap;
+    font-size: 40px;
+    font-weight:bolder;
+    font-family: 'Arial', sans-serif;
+    position: absolute;
+    transform: translateX(-50%);
+    transition: opacity 2s linear;
+}
+#points {
+    color: white;
+    top: -20px;
+    left: 50%;
+}
+#pointsPerSecond {
+    color: white;
+    font-size:25px;
+    top: 30px;
+    left: 50%;
+}
