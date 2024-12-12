@@ -1,10 +1,12 @@
 let upgradeIndex=1;
-let one=1;
-let datenowcheck=0;
 let infinityAnimation=false;
-let datenow=Date.now;
-let gameDataBackup={points: 0, PPS:1, upgrades:{}, check:true};
-let gameData={points: 0, PPS:1, upgrades:{}, check:true, ip:0, i:0};
+let gameData={points: 0, PPS:1, upgrades:{}, check:true, infinity:{i: 0, ip: 0, activated:false}};
+let elements={
+    IP:document.getElementById("IP"),
+    a:document.getElementById("amount"),
+    aps:document.getElementById("amountPS"),
+    aip:document.getElementById("amountIP")
+};
 let request=window.indexedDB.open("gameData", 1);
 Number.prototype.format=function() {
     return (this<1e6) ? this.toFixed(2) : this.toLocaleString(undefined, {
@@ -92,35 +94,15 @@ function unsave() {
 let dt=0;
 let lastTime=0
 function main(time) {
+    miscCode();
     infinityCheck();
-    if(datenow!==Date.now) {
-        switch(datenowcheck) {
-            case 0:
-                alert("Congrats, you failed to manipulate time");
-            break;
-            case 1:
-                alert("Congrats, you still failed to manipulate time");
-            break;
-            case 2:
-                alert("Fine, I will let you change the speed of the game");
-                let speed=Number(prompt("Speed value"));
-                one=1/(1+Math.abs(speed));
-                alert(`Speed set to 1/(1+|${speed}|)`);
-            break;
-            default:
-                Date.now=datenow;
-            break;
-        }
-        datenowcheck++;
-        Date.now=datenow;
-    }
-    dt=time-lastTime;
-    lastTime=time;
-    gameData.points+=gameData.PPS*dt/1000*one;
-    update();
+    update(time);
     requestAnimationFrame(main);
 }
-function update() {
+function update(time) {
+    dt=time-lastTime;
+    lastTime=time;
+    gameData.points+=gameData.PPS*dt/1000;
     gameData.PPS=1;
     let temp=[[0],[1],[0],[1]];
     let temp2=1;
@@ -143,21 +125,7 @@ function update() {
         });
     }
     gameData.PPS=gameData.PPS**temp2;
-    document.getElementById("amount").innerText=gameData.points.format();
-    document.getElementById("amountPS").innerText=(gameData.PPS*one).format();
-}
-function setupUpgrades() {
-    createUpgrade(10, 1, 1, 1, [1.5,10,1], !upgradeMissing(1));
-    createUpgrade(25, 1, 1, 1, [1.35,25,1], !upgradeMissing(2));
-    createUpgrade(200, 2, 1.5, 2, [200,2.3,2.5], !upgradeMissing(3));
-    createUpgrade(500, 2, 1.5, 2, [500,3.3,3], !upgradeMissing(4));
-    createUpgrade(50000, 3, 0.1, 3, [1.17,50000,3], !upgradeMissing(5));
-    createUpgrade(1e17, 4, 0.1, 3, [1.5,1e17,4], !upgradeMissing(6));
-    createUpgrade(1e25, 4, 0.1, 3, [3,1e25,5], !upgradeMissing(7));
-    createUpgrade(1e35, 4, 0.1, 3, [5,1e35,6], !upgradeMissing(8));
-    createUpgrade(1e66, 4, 0.1, 3, [7.5,1e66,7], !upgradeMissing(9));
-    createUpgrade(1e100, 4, 0.15, 3, [1000,1e100,8], !upgradeMissing(10));
-    createUpgrade(1e165, 4, 0.001, 1, [1,1e165,1], !upgradeMissing(11));
+    updateUI();
 }
 addEvent("#fakeUpgrade", "click", function() {
     this.innerText="You activated nothing";
@@ -169,12 +137,16 @@ addEvent("#fakeUpgrade", "click", function() {
     this.style.fontSize="0px";
     removeEvent("#fakeUpgrade");
     setTimeout(()=>{document.querySelector("#upgrades").removeChild(this)},3000);
-})
+});
 function infinityCheck() {
     if(infinityAnimation) return;
     if(gameData.points==Infinity) {
-        hide();
+        ignoreAnimation();
         infinityAnimation=true;
+        elements.aip.parentElement.style.transition="opacity 2s linear";
+        setTimeout(function() {
+            hide();
+        },70);
         setTimeout(function(){
             let inf=document.createElement("p");
             inf.style.position = "fixed";
@@ -190,16 +162,31 @@ function infinityCheck() {
 
             setTimeout(() => {
                 inf.style.opacity = "1";
-            }, 100);
+            }, 130);
             setTimeout(() => {
+                gameData.points=0;
+                gameData.PPS=0;
+                gameData.upgrades={};
+                setupUpgrades(true);
+                gameData.infinity.ip++;
+                gameData.infinity.i++;
+                gameData.infinity.activated=true;
                 inf.style.opacity="0";
                 setTimeout(() => {
                     document.body.removeChild(inf);
+                    setTimeout(function() {
+                        infinityAnimation=false;
+                    }, 500)
                     show();
                 }, 2400);
             }, 3600);
         },2000);
     }
+}
+function ignoreAnimation() {
+    document.querySelectorAll("body div button, p, body button").forEach(function(v) {
+        v.classList.add("ignoreAnimation");
+    });
 }
 function hide() {
     document.querySelectorAll("body div button, p, body button").forEach(function(v) {
@@ -209,5 +196,28 @@ function hide() {
 function show() {
     document.querySelectorAll("body div button, p, body button").forEach(function(v) {
         v.style.opacity="1";
+        setTimeout(function(){
+            v.classList.remove("ignoreAnimation");
+        }, 3000);
     });
 }
+function updateUI() {
+    if(gameData.infinity.activated&&!infinityAnimation) {
+        elements.aip.parentElement.style.transition="opacity 0s linear";
+        setTimeout(function() {
+            if(infinityAnimation) return;
+            elements.aip.parentElement.style.opacity="1";
+        },100);
+    }
+    elements.a.innerText=gameData.points.format();
+    elements.aps.innerText=gameData.PPS.format();
+    elements.aip.innerText=gameData.infinity.ip.format();
+}
+function miscCode() {
+    // later
+}
+addEvent("body", "keydown", function(e) {
+    if(e.key=="i"&&gameData.infinity.activated) {
+        alert("test successful")
+    }
+})
