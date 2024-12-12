@@ -1,3 +1,14 @@
+@keyframes hovered {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.85;
+    }
+    100% {
+        opacity: 1;
+    }
+}
 body {
     background-color: black;
 }
@@ -11,12 +22,38 @@ body {
     font-size: 12px;
     font-family: 'Arial', sans-serif;
     text-align: center;
-    line-height: 20px;
+    line-height: 15px;
     outline: 1px rgb(50,100,88) solid;
 }
-.upgrade:hover {
+.Infupgrade {
+    min-height: 60px;
+    min-width: 150px;
+    background-color: yellow;
+    border-radius: 15px;
+    box-shadow: 0 0 4px yellow;
+    transition: box-shadow 0.2s linear, transform 0.1s ease-in-out, opacity 2s linear !important;
+    font-size: 12px;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    line-height: 15px;
+    outline: 1px RGB(127, 127, 0) solid;
+}
+
+.Infupgrade:not(.ignoreAnimation):hover {
+    box-shadow: 0 0 10px yellow;
+    cursor: pointer;
+    animation: hovered 1s ease-in-out infinite;
+}
+.Infupgrade:active {
+    transform: translateY(2px);
+}
+#fakeUpgrade {
+    transition: opacity 2s linear, font-size 1.7s linear, min-width 2s linear, min-height 2s linear, width 2s linear, height 2s linear !important;
+}
+.upgrade:not(.ignoreAnimation):hover {
     box-shadow: 0 0 10px aquamarine;
     cursor: pointer;
+    animation: hovered 1s ease-in-out infinite;
 }
 .upgrade:active {
     transform: translateY(2px);
@@ -40,4 +77,11 @@ p {
     font-size:25px;
     top: 30px;
     left: 50%;
+}
+#IP {
+    color: yellow;
+    font-size:15px;
+    top: 70px;
+    left: 50%;
+    opacity: 0;
 }
