@@ -1,23 +1,16 @@
-function createUpgrade(price, type, factor, pricetype, pricefactor=[1,1,1], updateButton) {
-    if(!updateButton) {gameData.upgrades["up"+upgradeIndex]={price, type, factor, pricefactor, pricetype, bought:0, boost:+(type!==1&&type!==3)}}
+function createUpgrade(price, type, factor, pricetype, pricefactor, updateButton, infUp=false) {
+    if(!updateButton) {gameData.upgrades["up"+upgradeIndex]={price, type, factor, pricefactor, pricetype, bought:0, boost:+(type!==1&&type!==3), infUp}}
+    if(events["#up"+upgradeIndex]) {removeEvent("#up"+upgradeIndex)}
     addEvent("#up"+upgradeIndex, "click", function(){
         if(gameData.points==Infinity) return;
         let u=gameData.upgrades["up"+this.uindex]; // easier reference
-        if(gameData.points>=u.price) {
+        if(gameData.points>=u.price&&!u.infUp) {
             gameData.points-=u.price;
-            u.bought++;
-            switch(u.pricetype) {
-                case 1: // b(n+c)^a
-                    u.price=u.pricefactor[1]*(u.bought+u.pricefactor[2])**u.pricefactor[0];
-                break;
-                case 2: // an^b (log n)^c
-                    u.price=u.pricefactor[0]*u.bought**u.pricefactor[1]*(Math.log(u.bought+1)+1)**u.pricefactor[2]; // +1 in log for safety
-                break;
-                case 3: // ba^(n^c)
-                    u.price=u.pricefactor[1]*pricefactor[0]**(u.bought**u.pricefactor[2]);
-                break;
-            }
-            u.boost+=u.factor;
+            calculate(u);
+        }
+        if(gameData.infinity.ip>=u.price&&u.infUp) {
+            gameData.infinity.ip-=u.price;
+            calculate(u);
         }
         this.querySelector("span").innerText=u.price.format();
     }, function() {this.querySelector('span').innerText=gameData.upgrades["up"+upgradeIndex].price.format(); this.uindex=upgradeIndex; upgradeIndex++;});
@@ -27,9 +20,9 @@ function upgradeMissing(n) {
     return a===undefined;
 }
 function setupUpgrades(infReset=false) {
-    let upgradeCount=11;
+    let upgradeCount=11; // normal upgrade, not inf upgrade
+    upgradeIndex=1;
     if(infReset) {
-        upgradeIndex=1;
         for(let i=1; i<=upgradeCount; i++) {
             removeEvent("#up"+i);
         }
@@ -45,4 +38,25 @@ function setupUpgrades(infReset=false) {
     createUpgrade(1e66, 4, 0.1, 3, [7.5,1e66,7], !upgradeMissing(9));
     createUpgrade(1e100, 4, 0.15, 3, [1000,1e100,8], !upgradeMissing(10));
     createUpgrade(1e165, 4, 0.001, 1, [1,1e165,1], !upgradeMissing(11));
+    createUpgrade(1, 5, 1.5, 3, [2,1,1], !upgradeMissing(12), true);
+    createUpgrade(1, 1, 99, 3, [Infinity,Infinity,1], !upgradeMissing(13), true);
+}
+function calculate(u) {
+    u.bought++;
+    switch(u.pricetype) {
+        case 1: // b(n+c)^a
+            u.price=u.pricefactor[1]*(u.bought+u.pricefactor[2])**u.pricefactor[0];
+        break;
+        case 2: // an^b (log n)^c
+            u.price=u.pricefactor[0]*u.bought**u.pricefactor[1]*(Math.log(u.bought+1)+1)**u.pricefactor[2]; // +1 in log for safety
+        break;
+        case 3: // ba^(n^c)
+            u.price=u.pricefactor[1]*u.pricefactor[0]**(u.bought**u.pricefactor[2]);
+        break;
+    }
+    if(u.type!==5) {
+        u.boost+=u.factor;
+    } else {
+        u.boost*=u.factor;
+    }
 }

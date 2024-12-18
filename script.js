@@ -1,6 +1,8 @@
 let upgradeIndex=1;
 let infinityAnimation=false;
-let gameData={points: 0, PPS:1, upgrades:{}, check:true, infinity:{i: 0, ip: 0, activated:false}};
+let infShop=false;
+let currentTab="upgrades"
+let gameData={points: 0, PPS:1, upgrades:{}, check:true, infinity:{i: 0, ip: 0, activated:false}, autoSave:{delay:5000, active:true}};
 let elements={
     IP:document.getElementById("IP"),
     a:document.getElementById("amount"),
@@ -38,7 +40,7 @@ function save() {
         request.onerror=function(event) {
             console.error("Error storing game data:", event.target.error);
         };
-    }; // yes, I did copy this code, don't question me
+    }; // yes, I did copy this code, don't question me, same for every indexedDB function excluding autosave
 }
 function load() {
     return new Promise((resolve, reject) => {
@@ -104,13 +106,14 @@ function update(time) {
     lastTime=time;
     gameData.points+=gameData.PPS*dt/1000;
     gameData.PPS=1;
-    let temp=[[0],[1],[0],[1]];
+    let temp=[[0],[1],[0],[1],[1]];
     let temp2=1;
+    let temp4=1;
     for (const key in gameData.upgrades) {
         let upg=gameData.upgrades[key];
         temp[upg.type-1].push(upg.boost);
     }
-    for(let i=0; i<4; i++) {
+    for(let i=0; i<5; i++) {
         let temp3=temp[i];
         temp3.forEach(function(v) {
             if(i==0) {
@@ -119,12 +122,14 @@ function update(time) {
                 gameData.PPS*=v;
             } else if(i==2) {
                 temp2+=v;
-            } else {
+            } else if(i==3) {
                 temp2*=v;
+            }  else if(i==4) {
+                temp4*=v;
             }
         });
     }
-    gameData.PPS=gameData.PPS**temp2;
+    gameData.PPS=gameData.PPS**temp2*temp4;
     updateUI();
 }
 addEvent("#fakeUpgrade", "click", function() {
@@ -166,7 +171,9 @@ function infinityCheck() {
             setTimeout(() => {
                 gameData.points=0;
                 gameData.PPS=0;
-                gameData.upgrades={};
+                for(let i=1; i<=11; i++) {
+                    delete gameData.upgrades["up"+i]
+                }
                 setupUpgrades(true);
                 gameData.infinity.ip++;
                 gameData.infinity.i++;
@@ -198,6 +205,7 @@ function show() {
         v.style.opacity="1";
         setTimeout(function(){
             v.classList.remove("ignoreAnimation");
+            document.querySelector("#fakeUpgrade")?.classList?.add("ignoreAnimation");
         }, 3000);
     });
 }
@@ -217,7 +225,38 @@ function miscCode() {
     // later
 }
 addEvent("body", "keydown", function(e) {
-    if(e.key=="i"&&gameData.infinity.activated) {
-        alert("test successful")
+    toggleShops(e.key);
+});
+function toggleShops(k) {
+    if(gameData.infinity.activated&&k=="i") {
+        if(currentTab!=="infinityUpgrades") {
+            toggleHelper(currentTab, "infinityUpgrades");
+        } else {
+            toggleHelper("infinityUpgrades", "upgrades");
+        }
     }
-})
+    if(k=="o") {
+        if(currentTab!=="options") {
+            toggleHelper(currentTab, "options");
+        } else {
+            toggleHelper("options", "upgrades");
+        }
+    }
+}
+function toggleHelper(a,b) {
+    document.querySelectorAll(`#${a} button`).forEach(function(v) {
+        v.style.clipPath="circle(0% at 50% 50%)";
+    });
+    document.querySelectorAll(`#${b} button`).forEach(function(v) {
+        v.style.clipPath="circle(100% at 50% 50%)";
+    });
+    currentTab=b;
+}
+
+function autosave() {
+    if(gameData.autoSave.active) {
+        save();
+    }
+    setTimeout(autosave, gameData.autoSave.delay);
+}
+setTimeout(autosave, 1000);

@@ -7,29 +7,39 @@
     </head>
     <body>
         <div id="upgrades">
-            <button id="fakeUpgrade" class="upgrade" style="position: absolute; top: 5px; left: 10px; transition: opacity 3s linear, width 3s linear, height 3s linear, font-size 2.5s linear, min-width 3s linear, min-height 3s linear;">Buy max</button>
-            <button id="up1" class="upgrade" style="position: absolute; top: 75px; left: 10px;">Add 1 to base<br>isn't this obvious?<br><span>10</span> points</button>
-            <button id="up2" class="upgrade" style="position: absolute; top: 75px; left: 175px;">"Add 1 to base"'s brother<br>sequal to first upgrade<br><span>25</span> points</button>
-            <button id="up3" class="upgrade" style="position: absolute; top: 145px; left: 10px;">Multiplicative boost Ctrl+c<br>+x1.5<br><span>200</span> points</button>
-            <button id="up4" class="upgrade" style="position: absolute; top: 145px; left: 175px;">Ctrl+v<br>+x1.5 as new multiplier<br><span>500</span> points</button>
-            <button id="up5" class="upgrade" style="position: absolute; top: 215px; left: 10px;">add to exponent?!?<br>+0.1 exponent<br><span>50000</span> points</button>
-            <button class="upgrade" style="position: absolute; top: 215px; left: 175px;">this serves to waste time<br>+0 exponent<br><span>TREE(TREE(3))</span> points</button>
-            <button id="up6" class="upgrade" style="position: absolute; top: 285px; left: 10px;">Multiply exponent<br>+x0.1 multiplier<br><span>1E17</span> points</button>
-            <button id="up7" class="upgrade" style="position: absolute; top: 285px; left: 175px;">&lt;-- Trying to be<br>+x0.1 separate multiplier<br><span>1E25</span> points</button>
-            <button id="up8" class="upgrade" style="position: absolute; top: 285px; left: 340px;">First triplet<br>+x0.1 separate multiplier<br><span>1E35</span> points</button>
-            <button id="up9" class="upgrade" style="position: absolute; top: 285px; left: 505px;">Okay, I ran out of ideas<br>I don't feel like repeating<br><span>1E66</span> points</button>
-            <button id="up10" class="upgrade" style="position: absolute; top: 355px; left: 10px;">Fun fact: hold enter after click=autoclick<br><span>1E100</span> points</button>
-            <button id="up11" class="upgrade" style="position: absolute; top: 355px; left: 255px;">Exponential multi but with linear cost (I don't wanna continue)<br><span>1E165</span> points</button>
+            <button id="fakeUpgrade" class="ignoreAnimation" style="position: absolute; top: 5px; left: 10px; transition: opacity 3s linear, width 3s linear, height 3s linear, font-size 2.5s linear, min-width 3s linear, min-height 3s linear;">Buy max</button>
+            <button id="up1" style="position: absolute; top: 75px; left: 10px;">Add 1 to base<br>isn't this obvious?<br><span>10</span> points</button>
+            <button id="up2" style="position: absolute; top: 75px; left: 175px;">"Add 1 to base"'s brother<br>sequal to first upgrade<br><span>25</span> points</button>
+            <button id="up3" style="position: absolute; top: 145px; left: 10px;">Multiplicative boost Ctrl+c<br>+x1.5<br><span>200</span> points</button>
+            <button id="up4" style="position: absolute; top: 145px; left: 175px;">Ctrl+v<br>+x1.5 as new multiplier<br><span>500</span> points</button>
+            <button id="up5" style="position: absolute; top: 215px; left: 10px;">add to exponent?!?<br>+0.1 exponent<br><span>50000</span> points</button>
+            <button style="position: absolute; top: 215px; left: 175px;">this serves to waste time<br>+0 exponent<br><span>TREE(TREE(3))</span> points</button>
+            <button id="up6" style="position: absolute; top: 285px; left: 10px;">Multiply exponent<br>+x0.1 multiplier<br><span>1E17</span> points</button>
+            <button id="up7" style="position: absolute; top: 285px; left: 175px;">&lt;-- Trying to be<br>+x0.1 exponent multi<br><span>1E25</span> points</button>
+            <button id="up8" style="position: absolute; top: 285px; left: 340px;">First triplet<br>x0.1 exponent multi<br><span>1E35</span> points</button>
+            <button id="up9" style="position: absolute; top: 285px; left: 505px;">Okay, I ran out of ideas<br>despite everything, it's still +x0.1 exp<br><span>1E66</span> points</button>
+            <button id="up10" style="position: absolute; top: 355px; left: 10px;">Fun fact: hold enter after click=autoclick<br>yet again, +x0.1 exp<br><span>1E100</span> points</button>
+            <button id="up11" style="position: absolute; top: 355px; left: 255px;">Exponential multi but with linear cost (I don't wanna continue)<br>only +x0.001 exp<br><span>1E165</span> points</button>
+            <button id="buy10" onclick="javascript:(function(){if(gameData.points>=1e45) {for(let i=0; i<10; i++) {document.querySelectorAll('#upgrades button:not(#fakeUpgrade, #buy10)').forEach(function(v) {v.click()})}}})();" style="position: absolute; top: 425px; left: 10px;">Buy all 10 times after 1E45</button>
         </div>
         <div id="infinityUpgrades">
-            <button id="up12" class="Infupgrade" style="position: absolute; top: 215px; left: 340px;">But IPv4 or IPv6?<br>Boost by 50% (UNFINISHED)<br><span>1</span> IP</button>
+            <button id="up12" style="position: absolute; top: 5px; left: 10px;">But IPv4 or IPv6?<br>Boost by 50%<br><span>1</span> IP</button>
+            <button id="up13" style="position: absolute; top: 5px; left: 170px;">I'ma too lazy<br>Start with 100 base<br><span>1</span> IP</button>
         </div>
-        <button onclick="javascript:(function(){if(gameData.points>=1e45) {for(let i=0; i<10; i++) {document.querySelectorAll('#upgrades button:not(#fakeUpgrade)').forEach(function(v) {v.click()})}}})();" class="upgrade" style="position: absolute; top: 425px; left: 10px;">Buy all 10 times after 1E45</button>
+        <div id="options">
+            <button style="position: absolute; top: 5px; left: 175px" onclick="save()">Save</button>
+            <button style="position: absolute; top: 5px; left: 10px" onclick="javascript:(async function(){if(gameData.check) {gameData=await load()}})();">Load</button>
+            <button style="position: absolute; top: 75px; left: 10px" onclick="javascript:(function(a){gameData.autoSave.active=!gameData.autoSave.active; a.querySelector('span').innerText=(gameData.autoSave.active) ? 'on':'off'})(this);">Autosave: <br><span>on (no update on load)</span></button>
+            <button style="position: absolute; top: 75px; left: 175px" onclick="javascript:(function(a){let temp=Number(prompt('delay in seconds')); if(temp>10||!(temp>=1)) {alert('input must be between 1 and 10'); return}; gameData.autoSave.delay=temp*1000; a.querySelector('span').innerText=temp.format()+'s'})(this);">Autosave delay: <br><span>5s (no update on load)</span></button>
+            <button style="position: absolute; top: 100%; left: 0%; transform: translateY(-100%);" onclick="unsave()">Delete save</button>
+        </div>
         <div id="currencies">
             <p id="points"><span id="amount">0</span> points</p>
             <p id="pointsPerSecond"><span id="amountPS">0</span> points per second</p>
             <p id="IP"><span id="amountIP">0</span> Infinity Points</p>
         </div>
+        <p style="left: 99%; top: 94%; color: white; transform: translate(-100%, -100%); font-size: 12px">Press o for options, and i for (next layer) if unlocked</p>
+        <p style="left: 99%; top: 97%; color: white; transform: translate(-100%, -100%); font-size: 12px">Press same key again to go to upgrades</p>
         <script src="events.js"></script>
         <script src="upgradeCreation.js"></script>
         <script src="script.js"></script>
