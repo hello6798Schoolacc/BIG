@@ -238,7 +238,16 @@ function updateUI() {
     elements.aip.innerText=gameData.infinity.ip.format();
 }
 function miscCode() {
-    // later
+    if(gameData.options.infAnim&&gameData.infinity.i>=50) {
+        alert("The infinity animation has been forcibly disabled to prevent the slow animation with quick progress");
+        gameData.options.infAnim=false;
+    }
+    if(gameData.upgrades.up12.boost==Infinity) {
+        document.querySelector("#points").style.opacity="0";
+        document.querySelector("#pointsPerSecond").style.opacity="0";
+        document.querySelector("#amountIP").style.fontSize="40px";
+        document.querySelector("#amountIP").style.top="-20px";
+    }
 }
 addEvent("body", "keydown", function(e) {
     toggleShops(e.key);

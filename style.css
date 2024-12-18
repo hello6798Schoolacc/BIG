@@ -61,7 +61,7 @@ p {
     font-family: 'Arial', sans-serif;
     position: absolute;
     transform: translateX(-50%);
-    transition: opacity 2s linear;
+    transition: opacity 2s linear, left 2s linear, top 2s linear, font-size 2s linear;
 }
 #points {
     color: white;

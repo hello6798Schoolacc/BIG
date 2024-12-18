@@ -45,9 +45,9 @@ function setupUpgrades(infReset=false) {
     createUpgrade(1e66, 4, 0.11, 3, [7.5,1e66,7]);
     createUpgrade(1e100, 4, 0.15, 3, [1000,1e100,8]);
     createUpgrade(1e165, 4, 0.001, 1, [1,1e165,1]);
-    createUpgrade(1, 5, 2.5, 3, [2,1,1], [true, false]);
+    createUpgrade(1, 5, 10, 3, [1.1,1,0.6], [true, false]);
     createUpgrade(1, 1, 99, 3, [Infinity,Infinity,1], [true, false]);
-    createUpgrade(3, 1, 1, 3, [1.1,3,1.25], [true, true]);
+    createUpgrade(1, 1, 1, 3, [1.1,1,1.25], [true, true]);
     createUpgrade(10, 2, 1, 1, [1.75,10,1], [true, true]);
     createUpgrade(50, 2, 2, 1, [2,50,1], [true, true]);
 }
