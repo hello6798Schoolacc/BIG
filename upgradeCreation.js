@@ -1,19 +1,26 @@
-function createUpgrade(price, type, factor, pricetype, pricefactor, updateButton, infUp=false) {
-    if(!updateButton) {gameData.upgrades["up"+upgradeIndex]={price, type, factor, pricefactor, pricetype, bought:0, boost:+(type!==1&&type!==3), infUp}}
+function createUpgrade(price, type, factor, pricetype, pricefactor, infUp=[false, false]) {
+    if(upgradeMissing(upgradeIndex)) {
+        let infTypeIndex=0;
+        if(infUp[1]) {
+            infTypeIndex=gameData.infinity.boosts[type-1].length;
+        }
+        gameData.upgrades["up"+upgradeIndex]={price, type, factor, pricefactor, pricetype, bought:0, boost:+(type!==1&&type!==3), infUp, infTypeIndex}
+    }
     if(events["#up"+upgradeIndex]) {removeEvent("#up"+upgradeIndex)}
     addEvent("#up"+upgradeIndex, "click", function(){
         if(gameData.points==Infinity) return;
         let u=gameData.upgrades["up"+this.uindex]; // easier reference
-        if(gameData.points>=u.price&&!u.infUp) {
+        if(gameData.points>=u.price&&!u.infUp[0]) {
             gameData.points-=u.price;
             calculate(u);
         }
-        if(gameData.infinity.ip>=u.price&&u.infUp) {
+        if(gameData.infinity.ip>=u.price&&u.infUp[0]) {
             gameData.infinity.ip-=u.price;
             calculate(u);
         }
         this.querySelector("span").innerText=u.price.format();
-    }, function() {this.querySelector('span').innerText=gameData.upgrades["up"+upgradeIndex].price.format(); this.uindex=upgradeIndex; upgradeIndex++;});
+    }, function() {this.querySelector('span').innerText=gameData.upgrades["up"+upgradeIndex].price.format(); this.uindex=upgradeIndex; upgradeIndex++;
+    });
 }
 function upgradeMissing(n) {
     let a=gameData.upgrades?.["up"+n]
@@ -27,19 +34,22 @@ function setupUpgrades(infReset=false) {
             removeEvent("#up"+i);
         }
     }
-    createUpgrade(10, 1, 1, 1, [1.5,10,1], !upgradeMissing(1));
-    createUpgrade(25, 1, 1, 1, [1.35,25,1], !upgradeMissing(2));
-    createUpgrade(200, 2, 1.5, 2, [200,2.3,2.5], !upgradeMissing(3));
-    createUpgrade(500, 2, 1.5, 2, [500,3.3,3], !upgradeMissing(4));
-    createUpgrade(50000, 3, 0.1, 3, [1.17,50000,3], !upgradeMissing(5));
-    createUpgrade(1e17, 4, 0.1, 3, [1.5,1e17,4], !upgradeMissing(6));
-    createUpgrade(1e25, 4, 0.1, 3, [3,1e25,5], !upgradeMissing(7));
-    createUpgrade(1e35, 4, 0.1, 3, [5,1e35,6], !upgradeMissing(8));
-    createUpgrade(1e66, 4, 0.1, 3, [7.5,1e66,7], !upgradeMissing(9));
-    createUpgrade(1e100, 4, 0.15, 3, [1000,1e100,8], !upgradeMissing(10));
-    createUpgrade(1e165, 4, 0.001, 1, [1,1e165,1], !upgradeMissing(11));
-    createUpgrade(1, 5, 1.5, 3, [2,1,1], !upgradeMissing(12), true);
-    createUpgrade(1, 1, 99, 3, [Infinity,Infinity,1], !upgradeMissing(13), true);
+    createUpgrade(10, 1, 1, 1, [1.49,10,1]);
+    createUpgrade(25, 1, 1, 1, [1.34,25,1]);
+    createUpgrade(200, 2, 1.5, 2, [200,2.29,2.49]);
+    createUpgrade(500, 2, 1.5, 2, [500,3.29,2.99]);
+    createUpgrade(50000, 3, 0.1, 3, [1.166,50000,2.965]);
+    createUpgrade(1e17, 4, 0.1, 3, [1.48,1e17,3.95]);
+    createUpgrade(1e25, 4, 0.1, 3, [2.98,1e25,4.97]);
+    createUpgrade(1e35, 4, 0.1, 3, [4.8,1e35,5.9]);
+    createUpgrade(1e66, 4, 0.11, 3, [7.5,1e66,7]);
+    createUpgrade(1e100, 4, 0.15, 3, [1000,1e100,8]);
+    createUpgrade(1e165, 4, 0.001, 1, [1,1e165,1]);
+    createUpgrade(1, 5, 2.5, 3, [2,1,1], [true, false]);
+    createUpgrade(1, 1, 99, 3, [Infinity,Infinity,1], [true, false]);
+    createUpgrade(3, 1, 1, 3, [1.1,3,1.25], [true, true]);
+    createUpgrade(10, 2, 1, 1, [1.75,10,1], [true, true]);
+    createUpgrade(50, 2, 2, 1, [2,50,1], [true, true]);
 }
 function calculate(u) {
     u.bought++;
@@ -59,4 +69,8 @@ function calculate(u) {
     } else {
         u.boost*=u.factor;
     }
+    if(u.infUp[1]) {
+       gameData.infinity.boosts[u.type-1][u.infTypeIndex]=u.boost;
+    }
+    
 }

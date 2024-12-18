@@ -2,7 +2,7 @@ let upgradeIndex=1;
 let infinityAnimation=false;
 let infShop=false;
 let currentTab="upgrades"
-let gameData={points: 0, PPS:1, upgrades:{}, check:true, infinity:{i: 0, ip: 0, activated:false}, autoSave:{delay:5000, active:true}};
+let gameData={points: 0, PPS:1, upgrades:{}, check:true, infinity:{i: 0, ip: 0, activated:false, boosts:[[0], [1], [0], [1], [1]]}, options:{delay:5000, active:true, infAnim:true}};
 let elements={
     IP:document.getElementById("IP"),
     a:document.getElementById("amount"),
@@ -88,6 +88,9 @@ function unsave() {
     if(tmp) {
         if(tmp.check) {
             gameData=tmp;
+            document.querySelector("#o1 span").innerText=(gameData.options.active) ? "on":"off";
+            document.querySelector("#o2 span").innerText=(gameData.options.delay/1000).toFixed(2)+"s";
+            document.querySelector("#o3 span").innerText=(gameData.options.infAnim) ? "on":"off";
         }
     }
     setupUpgrades();
@@ -107,19 +110,25 @@ function update(time) {
     gameData.points+=gameData.PPS*dt/1000;
     gameData.PPS=1;
     let temp=[[0],[1],[0],[1],[1]];
-    let temp2=1;
-    let temp4=1;
     for (const key in gameData.upgrades) {
         let upg=gameData.upgrades[key];
+        if(upg.infUp[1]) {continue}
         temp[upg.type-1].push(upg.boost);
     }
+    gameData.PPS=calculateBoost(temp);
+    updateUI();
+}
+function calculateBoost(temp) {
+    let temp5=1;
+    let temp2=1;
+    let temp4=1;
     for(let i=0; i<5; i++) {
         let temp3=temp[i];
         temp3.forEach(function(v) {
             if(i==0) {
-                gameData.PPS+=v;
+                temp5+=v;
             } else if(i==1) {
-                gameData.PPS*=v;
+                temp5*=v;
             } else if(i==2) {
                 temp2+=v;
             } else if(i==3) {
@@ -129,8 +138,7 @@ function update(time) {
             }
         });
     }
-    gameData.PPS=gameData.PPS**temp2*temp4;
-    updateUI();
+    return (temp5**temp2)*temp4
 }
 addEvent("#fakeUpgrade", "click", function() {
     this.innerText="You activated nothing";
@@ -146,6 +154,10 @@ addEvent("#fakeUpgrade", "click", function() {
 function infinityCheck() {
     if(infinityAnimation) return;
     if(gameData.points==Infinity) {
+        if(!gameData.options.infAnim) {
+            infReset();
+            return;
+        }
         ignoreAnimation();
         infinityAnimation=true;
         elements.aip.parentElement.style.transition="opacity 2s linear";
@@ -169,15 +181,7 @@ function infinityCheck() {
                 inf.style.opacity = "1";
             }, 130);
             setTimeout(() => {
-                gameData.points=0;
-                gameData.PPS=0;
-                for(let i=1; i<=11; i++) {
-                    delete gameData.upgrades["up"+i]
-                }
-                setupUpgrades(true);
-                gameData.infinity.ip++;
-                gameData.infinity.i++;
-                gameData.infinity.activated=true;
+                infReset();
                 inf.style.opacity="0";
                 setTimeout(() => {
                     document.body.removeChild(inf);
@@ -189,6 +193,18 @@ function infinityCheck() {
             }, 3600);
         },2000);
     }
+}
+function infReset() {
+    gameData.points=0;
+    gameData.PPS=0;
+    for(let i=1; i<=11; i++) {
+        delete gameData.upgrades["up"+i]
+    }
+    setupUpgrades(true);
+    let ipAdded
+    gameData.infinity.ip+=calculateBoost(gameData.infinity.boosts);
+    gameData.infinity.i++;
+    gameData.infinity.activated=true;
 }
 function ignoreAnimation() {
     document.querySelectorAll("body div button, p, body button").forEach(function(v) {
@@ -254,9 +270,9 @@ function toggleHelper(a,b) {
 }
 
 function autosave() {
-    if(gameData.autoSave.active) {
+    if(gameData.options.active) {
         save();
     }
-    setTimeout(autosave, gameData.autoSave.delay);
+    setTimeout(autosave, gameData.options.delay);
 }
 setTimeout(autosave, 1000);
