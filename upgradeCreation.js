@@ -34,7 +34,7 @@ function setupUpgrades(infReset=false) {
             removeEvent("#up"+i);
         }
     }
-    if(gameData.upgrades.up12.boost*gameData.upgrades.up13.boost!=Infinity||!infReset) {
+    if(detectBoost()||!infReset) {
         createUpgrade(10, 1, 1, 1, [1.49,10,1]);
         createUpgrade(25, 1, 1, 1, [1.34,25,1]);
         createUpgrade(200, 2, 1.5, 2, [200,2.29,2.49]);
@@ -85,4 +85,7 @@ function calculate(u) {
        gameData.infinity.boosts[u.type-1][u.infTypeIndex]=u.boost;
     }
     
+}
+function detectBoost() {
+    try {return gameData.upgrades.up12.boost*gameData.upgrades.up13.boost!=Infinity} catch(e) {return false}
 }
