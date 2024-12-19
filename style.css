@@ -60,6 +60,7 @@ p {
     font-weight:bolder;
     font-family: 'Arial', sans-serif;
     position: absolute;
+    left: 50%;
     transform: translateX(-50%);
     transition: opacity 2s linear, left 2s linear, top 2s linear, font-size 2s linear;
 }

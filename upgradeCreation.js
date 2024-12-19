@@ -29,27 +29,39 @@ function upgradeMissing(n) {
 function setupUpgrades(infReset=false) {
     let upgradeCount=11; // normal upgrade, not inf upgrade
     upgradeIndex=1;
-    if(infReset) {
+    if(infReset&&window.events["#up1"]!==undefined) {
         for(let i=1; i<=upgradeCount; i++) {
             removeEvent("#up"+i);
         }
     }
-    createUpgrade(10, 1, 1, 1, [1.49,10,1]);
-    createUpgrade(25, 1, 1, 1, [1.34,25,1]);
-    createUpgrade(200, 2, 1.5, 2, [200,2.29,2.49]);
-    createUpgrade(500, 2, 1.5, 2, [500,3.29,2.99]);
-    createUpgrade(50000, 3, 0.1, 3, [1.166,50000,2.965]);
-    createUpgrade(1e17, 4, 0.1, 3, [1.48,1e17,3.95]);
-    createUpgrade(1e25, 4, 0.1, 3, [2.98,1e25,4.97]);
-    createUpgrade(1e35, 4, 0.1, 3, [4.8,1e35,5.9]);
-    createUpgrade(1e66, 4, 0.11, 3, [7.5,1e66,7]);
-    createUpgrade(1e100, 4, 0.15, 3, [1000,1e100,8]);
-    createUpgrade(1e165, 4, 0.001, 1, [1,1e165,1]);
-    createUpgrade(1, 5, 10, 3, [1.1,1,0.6], [true, false]);
-    createUpgrade(1, 1, 99, 3, [Infinity,Infinity,1], [true, false]);
-    createUpgrade(1, 1, 1, 3, [1.1,1,1.25], [true, true]);
-    createUpgrade(10, 2, 1, 1, [1.75,10,1], [true, true]);
-    createUpgrade(50, 2, 2, 1, [2,50,1], [true, true]);
+    if(gameData.upgrades.up12.boost*gameData.upgrades.up13.boost!=Infinity||!infReset) {
+        createUpgrade(10, 1, 1, 1, [1.49,10,1]);
+        createUpgrade(25, 1, 1, 1, [1.34,25,1]);
+        createUpgrade(200, 2, 1.5, 2, [200,2.29,2.49]);
+        createUpgrade(500, 2, 1.5, 2, [500,3.29,2.99]);
+        createUpgrade(50000, 3, 0.125, 3, [1.166,50000,2.965]);
+        createUpgrade(1e17, 4, 0.1, 3, [1.48,1e17,3.95]);
+        createUpgrade(1e25, 4, 0.1, 3, [2.98,1e25,4.97]);
+        createUpgrade(1e35, 4, 0.1, 3, [4.8,1e35,5.9]);
+        createUpgrade(1e66, 4, 0.11, 3, [7.5,1e66,7]);
+        createUpgrade(1e100, 4, 0.15, 3, [1000,1e100,8]);
+        createUpgrade(1e165, 4, 0.001, 1, [1,1e165,1]);
+    } else {
+        upgradeIndex=12;
+
+        document.querySelector("#upgrades").style.display="none"
+        document.querySelectorAll("#upgrades button").forEach(function(v) {
+            document.querySelector("#upgrades").removeChild(v);
+        });
+    }
+    if(!infReset) {
+        createUpgrade(1, 5, 10, 3, [1.1,1,0.6], [true, false]);
+        createUpgrade(0, 1, 99, 3, [Infinity,Infinity,1], [true, false]);
+        createUpgrade(1, 1, 1, 3, [1.1,1,1.25], [true, true]);
+        createUpgrade(10, 2, 1, 1, [1.75,10,1], [true, true]);
+        createUpgrade(50, 2, 2, 1, [2,50,1], [true, true]);
+        createUpgrade(100000, 3, 0.1, 3, [2,100000,2], [true, true]);
+    }
 }
 function calculate(u) {
     u.bought++;

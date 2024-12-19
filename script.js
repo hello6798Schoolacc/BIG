@@ -242,11 +242,14 @@ function miscCode() {
         alert("The infinity animation has been forcibly disabled to prevent the slow animation with quick progress");
         gameData.options.infAnim=false;
     }
-    if(gameData.upgrades.up12.boost==Infinity) {
+    if(gameData.upgrades.up12.boost*gameData.upgrades.up13.boost==Infinity) {
         document.querySelector("#points").style.opacity="0";
         document.querySelector("#pointsPerSecond").style.opacity="0";
-        document.querySelector("#amountIP").style.fontSize="40px";
-        document.querySelector("#amountIP").style.top="-20px";
+        document.querySelector("#IP").style.fontSize="40px";
+        document.querySelector("#IP").style.top="-20px";
+    }
+    if(isNaN(gameData.points)) {
+        gameData.points=0;
     }
 }
 addEvent("body", "keydown", function(e) {
@@ -285,3 +288,29 @@ function autosave() {
     setTimeout(autosave, gameData.options.delay);
 }
 setTimeout(autosave, 1000);
+
+
+
+
+addEvent("#endGame", "click", function() {
+    const createText=(text, top) => {let tempText=document.createElement("p"); tempText.style.position="fixed"; tempText.innerText=text; tempText.style.top=top+"%";tempText.style.transition="top 50s linear"; document.body.appendChild(tempText); tempText.style.color="white"; return tempText}
+    if(gameData.infinity.ip>=1e10) {
+        document.querySelectorAll("body *").forEach(function(v) {
+            v.style.opacity="0";
+        });
+        let list=[createText("Thank you for playing my game", 120), createText("Dev: me", 130),
+            createText("Graphics: me", 140), createText("Audio: none", 150), createText("Sacrifices: my school grade", 160),
+            createText("Code readability: false", 170), createText("useless features: all of them", 180), 
+            createText("next update in: never", 190), createText("Time spent just being bored: 97%", 200), 
+            createText("Rating: probably 1/5", 210), createText("annoyed at myself: 101%", 220),
+            createText("Teamwork: I don't even work with myself well", 230), createText("Effort: Yes and no", 240),
+            createText("Best working part: the html, potentially", 250), createText("repetitiveness: 100% after 100% after 100%", 260)];
+        setTimeout(function() {
+            list.forEach(function(v) {
+                let top=v.style.top.slice(0, v.style.top.indexOf("%"));
+                top=Number(top);
+                v.style.top=(top-500)+"%";
+            })
+        }, 200);
+    }
+});
